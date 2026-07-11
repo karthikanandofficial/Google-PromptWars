@@ -1,0 +1,11 @@
+fastapi==0.139.0
+uvicorn==0.51.0
+python-multipart==0.0.20
+google-genai>=1.0.0
+firebase-admin==7.5.0
+cachetools==7.1.4
+httpx==0.28.1
+python-dotenv==1.2.2
+pydantic-settings==2.14.2
+twilio==9.10.9
+pytest==9.1.1

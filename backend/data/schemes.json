@@ -1,0 +1,167 @@
+{
+  "source": "NDMA / NDRF / SDRF / PMFBY public eligibility rules",
+  "last_updated": "2024-01-01",
+  "schemes": [
+    {
+      "id": "SDRF_HOUSE",
+      "name": "State Disaster Response Fund — House Damage Relief",
+      "type": "SDRF",
+      "eligibility": "Pucca house fully damaged or kutcha house damaged/destroyed due to flood or cyclone. Owner must have lived in the house. Applicable across all states.",
+      "amount_inr": {
+        "pucca_fully_damaged": 95100,
+        "kutcha_fully_damaged": 63100,
+        "hut_fully_damaged": 16000
+      },
+      "required_documents": [
+        "Aadhaar card",
+        "Land ownership / rental agreement",
+        "Photograph of damaged property",
+        "Tehsildar / Revenue officer damage certificate",
+        "Bank passbook (first page)"
+      ],
+      "application_process": "Submit to Block Development Officer (BDO) or District Collector office within 90 days of disaster declaration.",
+      "timeline_days": 90,
+      "contact": "District Collector office / State Revenue Department"
+    },
+    {
+      "id": "SDRF_CATTLE",
+      "name": "SDRF Cattle/Livestock Loss",
+      "type": "SDRF",
+      "eligibility": "Cattle (milch animals, draught animals, poultry) lost due to flood. Small and marginal farmers and agricultural labourers.",
+      "amount_inr": {
+        "large_milch_animal": 30000,
+        "small_milch_animal": 3000,
+        "poultry_per_bird": 50,
+        "sheep_goat": 3000
+      },
+      "required_documents": [
+        "Aadhaar card",
+        "Veterinary officer death certificate for the animal",
+        "Ear tag number or cattle registration",
+        "Bank passbook"
+      ],
+      "application_process": "Submit to Tehsil office or Panchayat office within 60 days of loss.",
+      "timeline_days": 60,
+      "contact": "Tehsildar / Block Animal Husbandry Officer"
+    },
+    {
+      "id": "SDRF_CROP",
+      "name": "SDRF Agricultural Input Subsidy (Crop Loss)",
+      "type": "SDRF",
+      "eligibility": "Farmers with 33% or more crop loss due to natural calamity. Must be reported through the Tehsildar.",
+      "amount_inr": {
+        "rainfed_per_hectare": 6800,
+        "irrigated_per_hectare": 13500,
+        "perennial_crop_per_hectare": 18000,
+        "max_area_hectares": 2
+      },
+      "required_documents": [
+        "Aadhaar card",
+        "Land record / 7/12 extract (Khata)",
+        "Crop loss assessment by Revenue/Agriculture officer",
+        "Bank passbook"
+      ],
+      "application_process": "Apply through the Tehsil or online on state agriculture portal within 30 days of crop damage.",
+      "timeline_days": 30,
+      "contact": "Agriculture Department / Tehsildar"
+    },
+    {
+      "id": "PMFBY",
+      "name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "type": "Central Scheme",
+      "eligibility": "Enrolled farmers (compulsory for loanee farmers, voluntary for others) whose insured crop was damaged by flood, drought, pest attack, or unseasonal rain.",
+      "premium_rates": {
+        "kharif": "2% of sum insured",
+        "rabi": "1.5% of sum insured",
+        "commercial_horticulture": "5% of sum insured"
+      },
+      "required_documents": [
+        "Aadhaar card",
+        "Policy document / PMFBY enrollment proof",
+        "Crop loss photograph with geo-tag",
+        "Bank passbook",
+        "Land record"
+      ],
+      "application_process": "Notify loss within 72 hours to insurance company or through the PMFBY app / Common Service Centre. Claims settled through crop cutting experiments and satellite data.",
+      "timeline_days": 72,
+      "contact": "Empanelled insurance company / Nearest CSC / PMFBY helpline 1800-180-1111"
+    },
+    {
+      "id": "NDRF_GRATUITOUS",
+      "name": "NDRF Immediate Gratuitous Relief",
+      "type": "NDRF",
+      "eligibility": "All affected families in officially declared disaster areas. No income limit. Provided during rescue and relief phase.",
+      "items_provided": [
+        "Food packets / cooked meals",
+        "Drinking water",
+        "Temporary shelter (tents/tarpaulins)",
+        "Clothing",
+        "Utensils kit",
+        "Hygiene kit"
+      ],
+      "required_documents": ["Aadhaar card (preferred but not mandatory during emergency)"],
+      "application_process": "Report to nearest relief camp operated by district administration, NDRF, or State Disaster Response Force.",
+      "timeline_days": 0,
+      "contact": "NDRF Helpline: 011-24363260 / State Emergency Operations Centre"
+    },
+    {
+      "id": "PMAY_GRAMIN",
+      "name": "Pradhan Mantri Awaas Yojana — Gramin (Flood Damage)",
+      "type": "Central Scheme",
+      "eligibility": "BPL/PMAY-listed beneficiaries whose house was fully damaged. Also available to those whose house was damaged beyond repair (category SC/ST/OBC/minorities/physically challenged prioritised).",
+      "amount_inr": {
+        "plain_areas": 120000,
+        "hilly_areas": 130000
+      },
+      "required_documents": [
+        "Aadhaar card",
+        "BPL / SECC-2011 inclusion certificate",
+        "Revenue officer damage certificate",
+        "Land ownership proof",
+        "Bank passbook"
+      ],
+      "application_process": "Apply through Gram Panchayat / Block Development Officer. House should be constructed within 12 months.",
+      "timeline_days": 365,
+      "contact": "Gram Panchayat / BDO office"
+    },
+    {
+      "id": "BOATS_FISHING",
+      "name": "SDRF Fishermen — Boat and Net Loss",
+      "type": "SDRF",
+      "eligibility": "Fishermen who lost boats, nets, or fishing equipment due to cyclone or flood. Must hold valid fishing licence.",
+      "amount_inr": {
+        "motorised_boat": 9600,
+        "non_motorised_boat": 2600,
+        "fishing_net": 2600
+      },
+      "required_documents": [
+        "Aadhaar card",
+        "Fishing licence",
+        "Revenue officer or Fisheries Department loss certificate",
+        "Bank passbook"
+      ],
+      "application_process": "Submit to District Fisheries Officer within 60 days of loss.",
+      "timeline_days": 60,
+      "contact": "District Fisheries Officer"
+    },
+    {
+      "id": "EX_GRATIA_DEATH",
+      "name": "SDRF Ex-Gratia — Death in Flood",
+      "type": "SDRF",
+      "eligibility": "Legal heir of person who died due to flood/drowning. No income limit.",
+      "amount_inr": {
+        "ex_gratia_per_death": 400000
+      },
+      "required_documents": [
+        "Death certificate",
+        "FIR / Post-mortem report (if available)",
+        "Legal heir certificate",
+        "Aadhaar card of deceased and claimant",
+        "Bank passbook of claimant"
+      ],
+      "application_process": "File claim at Tehsil office or District Collector office. Processed within 15 days of declaration.",
+      "timeline_days": 15,
+      "contact": "Tehsildar / District Collector"
+    }
+  ]
+}

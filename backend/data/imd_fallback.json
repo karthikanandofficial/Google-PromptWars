@@ -1,0 +1,62 @@
+{
+  "source": "fallback",
+  "generated_at": "2025-07-10T06:00:00Z",
+  "note": "This is the last-known IMD alert. Live RSS feed was unavailable at time of retrieval.",
+  "alerts": [
+    {
+      "district": "Ernakulam",
+      "state": "Kerala",
+      "pincodes_prefix": ["682"],
+      "alert_level": "Orange",
+      "headline": "Heavy to Very Heavy Rainfall Warning for Ernakulam district",
+      "detail": "IMD issues Orange Alert for Ernakulam, Kerala. Heavy to very heavy rainfall (115.6–204.4 mm) expected in the next 24 hours. Strong winds (40–50 kmph) likely. Low-lying areas near Periyar and Muvattupuzha rivers prone to waterlogging. Avoid river banks and flood-prone zones.",
+      "valid_from": "2025-07-10T06:00:00+05:30",
+      "valid_until": "2025-07-11T06:00:00+05:30",
+      "issued_by": "India Meteorological Department, Thiruvananthapuram"
+    },
+    {
+      "district": "Greater Mumbai",
+      "state": "Maharashtra",
+      "pincodes_prefix": ["400"],
+      "alert_level": "Yellow",
+      "headline": "Moderate Rainfall Advisory for Mumbai",
+      "detail": "IMD Yellow Alert for Mumbai Metropolitan Region. Moderate rainfall (15–64.5 mm) expected over next 12 hours. Some waterlogging possible in low-lying suburban areas. Citizens advised to avoid travel during peak rain hours.",
+      "valid_from": "2025-07-10T12:00:00+05:30",
+      "valid_until": "2025-07-11T00:00:00+05:30",
+      "issued_by": "India Meteorological Department, Mumbai"
+    },
+    {
+      "district": "Kamrup Metropolitan",
+      "state": "Assam",
+      "pincodes_prefix": ["781"],
+      "alert_level": "Red",
+      "headline": "Extremely Heavy Rainfall — Red Alert for Guwahati and Kamrup",
+      "detail": "IMD Red Alert: Extremely heavy rainfall (>204.4 mm) expected in Kamrup Metropolitan and adjoining districts. Brahmaputra tributaries (Bharalu, Basistha) may exceed danger mark. Evacuation advisories active for riverside settlements. Avoid all movement near embankments.",
+      "valid_from": "2025-07-10T00:00:00+05:30",
+      "valid_until": "2025-07-11T12:00:00+05:30",
+      "issued_by": "India Meteorological Department, Guwahati"
+    },
+    {
+      "district": "Khordha",
+      "state": "Odisha",
+      "pincodes_prefix": ["751"],
+      "alert_level": "Orange",
+      "headline": "Heavy Rainfall Warning for Bhubaneswar and Khordha",
+      "detail": "IMD Orange Alert for Khordha district. Heavy to very heavy rainfall expected. Urban flooding likely in low-lying wards. Municipal drainage may be strained. Citizens advised to keep emergency kits ready.",
+      "valid_from": "2025-07-10T06:00:00+05:30",
+      "valid_until": "2025-07-11T06:00:00+05:30",
+      "issued_by": "India Meteorological Department, Bhubaneswar"
+    },
+    {
+      "district": "Chennai",
+      "state": "Tamil Nadu",
+      "pincodes_prefix": ["600"],
+      "alert_level": "Yellow",
+      "headline": "Light to Moderate Rainfall Advisory for Chennai",
+      "detail": "IMD Yellow Advisory for Chennai and surrounding districts. Light to moderate rainfall expected. No immediate threat of major flooding. Monitor local alerts.",
+      "valid_from": "2025-07-10T12:00:00+05:30",
+      "valid_until": "2025-07-11T00:00:00+05:30",
+      "issued_by": "India Meteorological Department, Chennai"
+    }
+  ]
+}
