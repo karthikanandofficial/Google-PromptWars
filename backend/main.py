@@ -20,6 +20,7 @@ app.add_middleware(
         "http://localhost:3001",
         "https://monsoon-saathi.vercel.app",
         "https://*.vercel.app",
+        "https://frontend-9f1qvbzne-karthikanandofficial-6992s-projects.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
