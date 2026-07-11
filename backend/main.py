@@ -15,15 +15,8 @@ app = FastAPI(title="MonsoonSaathi", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://monsoon-saathi.vercel.app",
-        "https://*.vercel.app",
-        "https://frontend-9f1qvbzne-karthikanandofficial-6992s-projects.vercel.app",
-        "https://monsoon-saathi-api.vercel.app",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
