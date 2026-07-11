@@ -12,10 +12,7 @@ services:
         sync: false
       - key: TWILIO_ACCOUNT_SID
         sync: false
-      - key: FIREBASE_CREDENTIALS_PATH
-        value: /etc/secrets/Firebase.json
+      - key: FIREBASE_CREDENTIALS_JSON
+        sync: false
       - key: ENVIRONMENT
         value: production
-    secretFiles:
-      - name: Firebase.json
-        mountPath: /etc/secrets/Firebase.json

@@ -1,4 +1,7 @@
+import base64
+import json
 import logging
+import tempfile
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import TypedDict
@@ -17,20 +20,30 @@ _db = None
 
 
 def _resolve_cred_path(raw: str) -> str:
-    """Resolve credential path: absolute stays as-is, relative resolves from backend/."""
     p = Path(raw)
     if p.is_absolute():
         return str(p)
-    resolved = _BACKEND_DIR / p
-    return str(resolved)
+    return str(_BACKEND_DIR / p)
+
+
+def _build_credentials() -> credentials.Certificate:
+    """Build Firebase credentials from env var JSON (base64) or file path."""
+    if settings.FIREBASE_CREDENTIALS_JSON:
+        # Render deployment: credentials passed as base64-encoded JSON env var
+        raw_json = base64.b64decode(settings.FIREBASE_CREDENTIALS_JSON).decode("utf-8")
+        cred_dict = json.loads(raw_json)
+        return credentials.Certificate(cred_dict)
+    if settings.FIREBASE_CREDENTIALS_PATH:
+        cred_path = _resolve_cred_path(settings.FIREBASE_CREDENTIALS_PATH)
+        return credentials.Certificate(cred_path)
+    raise RuntimeError("Neither FIREBASE_CREDENTIALS_JSON nor FIREBASE_CREDENTIALS_PATH is set")
 
 
 def _get_db():
     global _app, _db
     if _db is None:
         if not firebase_admin._apps:
-            cred_path = _resolve_cred_path(settings.FIREBASE_CREDENTIALS_PATH)
-            cred = credentials.Certificate(cred_path)
+            cred = _build_credentials()
             _app = firebase_admin.initialize_app(cred)
         _db = firestore.client()
     return _db

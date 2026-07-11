@@ -10,10 +10,12 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     TWILIO_AUTH_TOKEN: str
     TWILIO_ACCOUNT_SID: str
-    FIREBASE_CREDENTIALS_PATH: str
+    # One of these two must be set: path to JSON file, or base64-encoded JSON content
+    FIREBASE_CREDENTIALS_PATH: str = ""
+    FIREBASE_CREDENTIALS_JSON: str = ""  # base64-encoded; used on Render where file mounts aren't free
     ENVIRONMENT: str = "development"
 
-    @field_validator("GEMINI_API_KEY", "TWILIO_AUTH_TOKEN", "TWILIO_ACCOUNT_SID", "FIREBASE_CREDENTIALS_PATH")
+    @field_validator("GEMINI_API_KEY", "TWILIO_AUTH_TOKEN", "TWILIO_ACCOUNT_SID")
     @classmethod
     def must_not_be_empty(cls, v: str, info) -> str:
         if not v or not v.strip():
