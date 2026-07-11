@@ -5,8 +5,8 @@ import { TriageResult } from "@/lib/api";
 
 const PRIORITY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   CRITICAL: { bg: "rgba(239,68,68,0.1)", text: "#ef4444", border: "#ef4444" },
-  HIGH: { bg: "rgba(245,158,11,0.1)", text: "var(--warn)", border: "var(--warn)" },
-  MEDIUM: { bg: "rgba(79,142,247,0.1)", text: "var(--accent)", border: "var(--accent)" },
+  HIGH: { bg: "rgba(245,158,11,0.1)", text: "var(--ms-warn)", border: "var(--ms-warn)" },
+  MEDIUM: { bg: "rgba(79,142,247,0.1)", text: "var(--ms-accent)", border: "var(--ms-accent)" },
 };
 
 function parsePriority(item: string): "CRITICAL" | "HIGH" | "MEDIUM" {
@@ -49,7 +49,7 @@ function TriageCard({ item, index }: { item: string; index: number }) {
         >
           {priority}
         </span>
-        <p style={{ margin: 0, fontSize: 13, color: "var(--text-primary)", lineHeight: 1.5 }}>
+        <p style={{ margin: 0, fontSize: 13, color: "var(--ms-text-primary)", lineHeight: 1.5 }}>
           {item.replace(/^(CRITICAL:|HIGH:|MEDIUM:)\s*/i, "")}
         </p>
       </div>
@@ -64,22 +64,22 @@ export function TriageBoard({ result }: { result: TriageResult }) {
         style={{
           padding: "16px",
           borderRadius: 10,
-          background: "var(--bg-surface)",
-          border: "1px solid var(--border)",
+          background: "var(--ms-surface)",
+          border: "1px solid var(--ms-border)",
           marginBottom: 4,
         }}
       >
-        <p style={{ margin: 0, fontSize: 14, color: "var(--text-primary)", lineHeight: 1.6 }}>
+        <p style={{ margin: 0, fontSize: 14, color: "var(--ms-text-primary)", lineHeight: 1.6 }}>
           {result.response_text}
         </p>
-        <div style={{ marginTop: 8, fontSize: 11, color: "var(--text-secondary)" }}>
+        <div style={{ marginTop: 8, fontSize: 11, color: "var(--ms-text-secondary)" }}>
           Confidence: {Math.round(result.confidence * 100)}% · Source: {result.metadata.source}
         </div>
       </div>
 
       {result.action_items.length > 0 && (
         <>
-          <h3 style={{ margin: "8px 0 4px", fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>
+          <h3 style={{ margin: "8px 0 4px", fontSize: 13, fontWeight: 700, color: "var(--ms-text-secondary)", letterSpacing: "0.05em" }}>
             PRIORITY ACTIONS
           </h3>
           {result.action_items.map((item, i) => (
@@ -96,7 +96,7 @@ export function TriageBoard({ result }: { result: TriageResult }) {
             background: "rgba(245,158,11,0.08)",
             border: "1px solid rgba(245,158,11,0.3)",
             fontSize: 12,
-            color: "var(--warn)",
+            color: "var(--ms-warn)",
           }}
         >
           {result.warnings.join(" · ")}

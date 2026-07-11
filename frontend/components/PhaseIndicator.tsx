@@ -1,17 +1,17 @@
 "use client";
 
 const PHASE_CONFIG = {
-  PREPARE: { label: "PREPARE", color: "var(--accent)", bg: "rgba(79,142,247,0.15)" },
-  DURING: { label: "DURING", color: "var(--warn)", bg: "rgba(245,158,11,0.15)" },
-  AFTER: { label: "AFTER", color: "var(--success)", bg: "rgba(16,185,129,0.15)" },
-  ALERT: { label: "ALERT", color: "var(--warn)", bg: "rgba(245,158,11,0.15)" },
+  PREPARE: { label: "PREPARE", color: "var(--ms-accent)", bg: "rgba(79,142,247,0.15)" },
+  DURING: { label: "DURING", color: "var(--ms-warn)", bg: "rgba(245,158,11,0.15)" },
+  AFTER: { label: "AFTER", color: "var(--ms-success)", bg: "rgba(16,185,129,0.15)" },
+  ALERT: { label: "ALERT", color: "var(--ms-warn)", bg: "rgba(245,158,11,0.15)" },
   COORD: { label: "COORD", color: "#a78bfa", bg: "rgba(167,139,250,0.15)" },
 };
 
 export function PhaseIndicator({ phase }: { phase: string }) {
   const cfg = PHASE_CONFIG[phase as keyof typeof PHASE_CONFIG] ?? {
     label: phase,
-    color: "var(--text-secondary)",
+    color: "var(--ms-text-secondary)",
     bg: "rgba(148,163,184,0.1)",
   };
 

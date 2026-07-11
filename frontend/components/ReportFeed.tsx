@@ -18,9 +18,9 @@ function ReportSkeleton() {
   return (
     <div className="animate-pulse space-y-2">
       {[...Array(4)].map((_, i) => (
-        <div key={i} style={{ padding: "12px", borderRadius: 8, background: "var(--bg-surface)" }}>
-          <div style={{ height: 12, width: "30%", background: "var(--border)", borderRadius: 4, marginBottom: 8 }} />
-          <div style={{ height: 12, width: "80%", background: "var(--border)", borderRadius: 4 }} />
+        <div key={i} style={{ padding: "12px", borderRadius: 8, background: "var(--ms-surface)" }}>
+          <div style={{ height: 12, width: "30%", background: "var(--ms-border)", borderRadius: 4, marginBottom: 8 }} />
+          <div style={{ height: 12, width: "80%", background: "var(--ms-border)", borderRadius: 4 }} />
         </div>
       ))}
     </div>
@@ -41,7 +41,7 @@ export function ReportFeed() {
 
   if (error) {
     return (
-      <div style={{ color: "var(--warn)", padding: 12, fontSize: 13 }}>
+      <div style={{ color: "var(--ms-warn)", padding: 12, fontSize: 13 }}>
         Failed to load reports: {error}
       </div>
     );
@@ -51,7 +51,7 @@ export function ReportFeed() {
 
   if (reports.length === 0) {
     return (
-      <div style={{ color: "var(--text-secondary)", padding: 16, textAlign: "center", fontSize: 13 }}>
+      <div style={{ color: "var(--ms-text-secondary)", padding: 16, textAlign: "center", fontSize: 13 }}>
         No reports yet. Citizen reports will appear here in real time.
       </div>
     );
@@ -65,8 +65,8 @@ export function ReportFeed() {
           style={{
             padding: "12px 14px",
             borderRadius: 8,
-            background: "var(--bg-surface)",
-            border: "1px solid var(--border)",
+            background: "var(--ms-surface)",
+            border: "1px solid var(--ms-border)",
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -74,7 +74,7 @@ export function ReportFeed() {
               style={{
                 fontSize: 11,
                 fontWeight: 700,
-                color: "var(--accent)",
+                color: "var(--ms-accent)",
                 background: "rgba(79,142,247,0.1)",
                 padding: "2px 8px",
                 borderRadius: 999,
@@ -82,11 +82,11 @@ export function ReportFeed() {
             >
               {r.pincode}
             </span>
-            <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>
+            <span style={{ fontSize: 11, color: "var(--ms-text-secondary)" }}>
               {formatTime(r.timestamp)}
             </span>
           </div>
-          <p style={{ fontSize: 13, color: "var(--text-primary)", margin: 0, lineHeight: 1.4 }}>
+          <p style={{ fontSize: 13, color: "var(--ms-text-primary)", margin: 0, lineHeight: 1.4 }}>
             {r.text.length > 120 ? r.text.slice(0, 120) + "…" : r.text}
           </p>
         </div>

@@ -29,7 +29,7 @@ export function WorkflowProgress({ currentStage }: { currentStage: string }) {
                 : isDone
                 ? "rgba(16,185,129,0.08)"
                 : "transparent",
-              border: `1px solid ${isActive ? "var(--accent)" : isDone ? "var(--success)" : "var(--border)"}`,
+              border: `1px solid ${isActive ? "var(--ms-accent)" : isDone ? "var(--ms-success)" : "var(--ms-border)"}`,
               transition: "all 0.2s ease",
             }}
           >
@@ -40,10 +40,10 @@ export function WorkflowProgress({ currentStage }: { currentStage: string }) {
               style={{
                 fontSize: 13,
                 color: isDone
-                  ? "var(--success)"
+                  ? "var(--ms-success)"
                   : isActive
-                  ? "var(--accent)"
-                  : "var(--text-secondary)",
+                  ? "var(--ms-accent)"
+                  : "var(--ms-text-secondary)",
                 fontWeight: isActive ? 600 : 400,
               }}
             >

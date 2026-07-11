@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { streamRelief, TriageResult } from "@/lib/api";
-import { StreamingResponse } from "@/components/SchemeCard";
+import { StreamingResponse } from "@/components/StreamingResponse";
 
 const LANGUAGES = [
   { value: "English", label: "English" },

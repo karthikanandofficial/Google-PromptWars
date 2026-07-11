@@ -30,7 +30,25 @@ async def get_alert(pincode: str, language: str) -> dict:
 
     user_msg = f"Alert for pincode {pincode}, risk tier {risk['tier'].value}. Headline: {raw_alert['headline']}"
 
-    raw = await call_gemini(system, user_msg)
+    try:
+        raw = await call_gemini(system, user_msg)
+    except Exception as e:
+        # Gemini down/rate-limited: the raw IMD alert is still life-safety
+        # information — serve it untranslated rather than failing the request
+        logger.error(f"Gemini unavailable for alert {pincode}/{language}, serving raw IMD text: {e}")
+        return {
+            "response_text": f"{raw_alert['headline']}\n\n{raw_alert['detail']}",
+            "phase": "ALERT",
+            "confidence": 0.5,
+            "action_items": [],
+            "warnings": [f"AI translation to {language} unavailable — showing original alert text."],
+            "metadata": {
+                "word_count": len(raw_alert["detail"].split()),
+                "language": "English",
+                "source": raw_alert["source"],
+            },
+        }
+
     result = validate_and_repair(raw, "ALERT")
     # Preserve original source from IMD fetch
     result["metadata"]["source"] = raw_alert["source"]

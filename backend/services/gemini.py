@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 from typing import Any
@@ -15,6 +16,12 @@ _GENERATION_CONFIG = types.GenerateContentConfig(
     response_mime_type="application/json",
     temperature=0.2,
 )
+
+
+def _is_rate_limit(e: Exception) -> bool:
+    """Detect quota/rate-limit errors across the SDK's exception shapes."""
+    text = str(e)
+    return "429" in text or "RESOURCE_EXHAUSTED" in text
 
 
 async def call_gemini(system: str, user: str) -> dict[str, Any]:
@@ -43,6 +50,13 @@ async def call_gemini(system: str, user: str) -> dict[str, Any]:
             logger.warning(f"Gemini JSON parse failure (attempt {attempt + 1}/3): {e}")
         except Exception as e:
             last_error = e
+            if _is_rate_limit(e) and attempt < 2:
+                # Free-tier 429s are transient — back off and retry instead of
+                # surfacing a 500 to the caller
+                delay = 2.0 * (attempt + 1)
+                logger.warning(f"Gemini rate-limited (attempt {attempt + 1}/3), retrying in {delay}s")
+                await asyncio.sleep(delay)
+                continue
             logger.error(f"Gemini API error (attempt {attempt + 1}/3): {e}")
             raise
 
