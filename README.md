@@ -227,6 +227,22 @@ Seeds 8 reports across Ernakulam (682001), Mumbai (400001), Guwahati (781001), a
 pytest backend/tests/ -v
 ```
 
+77 tests across 9 files, covering every backend module. External boundaries (Gemini, Firestore, IMD network) are mocked; internal logic is never mocked.
+
+| Test file | Covers |
+|---|---|
+| `test_vulnerability.py` | NDMA GeoJSON risk tier lookup, unknown-pincode fallback |
+| `test_planner.py` | Intent detection (incl. Hindi), language/pincode parsing, state machine routing |
+| `test_reviewer.py` | Schema validation, field repair, low-confidence warnings, fallback responses |
+| `test_response_cache.py` | TTL cache keying, case normalization, phase routing |
+| `test_imd.py` | HTML extraction, fallback alerts, network-failure degradation |
+| `test_prepare.py` | Profile injection into prompts, cache hits, risk-tier word budgets |
+| `test_relief.py` | Scheme rules loading and injection, reviewer repair of partial output |
+| `test_coordinator.py` | Report aggregation into prompts, empty-report short circuit |
+| `test_routes.py` / `test_webhook.py` | Input validation (422s), SSE stream format, health checks, Twilio signature rejection, sanitization, phone hashing |
+
+The suite runs without any `.env` file — `conftest.py` injects fake credentials, so no live service is touched.
+
 ---
 
 ## Supported Languages

@@ -2,7 +2,7 @@ import logging
 from typing import TypedDict
 
 from backend.agents.reviewer import validate_and_repair
-from backend.agents.vulnerability import RiskTier, RiskResult
+from backend.agents.vulnerability import RiskResult
 from backend.cache.response_cache import get_cached, set_cached
 from backend.prompts.templates import SYSTEM_TEMPLATE
 from backend.services.gemini import call_gemini

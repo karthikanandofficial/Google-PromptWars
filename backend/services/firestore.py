@@ -1,7 +1,6 @@
 import base64
 import json
 import logging
-import tempfile
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import TypedDict

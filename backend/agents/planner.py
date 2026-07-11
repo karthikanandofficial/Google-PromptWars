@@ -1,4 +1,9 @@
-import asyncio
+"""Phase Router — the deterministic state machine at the core of MonsoonSaathi.
+
+Routing decisions (which agent, which phase, which prompt) are made here from
+session state and keyword intent, never by the LLM. Gemini only ever receives
+a fully-specified prompt with no routing ambiguity left to resolve.
+"""
 import logging
 import re
 
@@ -14,11 +19,13 @@ from backend.agents.reviewer import validate_and_repair
 
 logger = logging.getLogger(__name__)
 
+# Devanagari keywords sit outside \b groups: Python's \b relies on \w, which
+# excludes combining vowel signs (category Mn), so \b never matches after them
 KEYWORD_PATTERNS = {
-    "PREPARE": re.compile(r"\b(prepare|preparat|ready|plan|before|checklist|तैयार|तैयारी)\b", re.IGNORECASE),
-    "ALERT": re.compile(r"\b(alert|warning|forecast|imd|weather|rain|flood|danger|खतरा|चेतावनी)\b", re.IGNORECASE),
-    "REPORT": re.compile(r"\b(report|water|flood|knee|waist|road|block|stuck|stranded|help|rescue|पानी|बाढ़)\b", re.IGNORECASE),
-    "RELIEF": re.compile(r"\b(relief|scheme|claim|compensation|damage|loss|money|नुकसान|सहायता|मुआवजा)\b", re.IGNORECASE),
+    "PREPARE": re.compile(r"\b(prepare|preparat|ready|plan|before|checklist)\b|तैयार|तैयारी", re.IGNORECASE),
+    "ALERT": re.compile(r"\b(alert|warning|forecast|imd|weather|rain|flood|danger)\b|खतरा|चेतावनी", re.IGNORECASE),
+    "REPORT": re.compile(r"\b(report|water|flood|knee|waist|road|block|stuck|stranded|help|rescue)\b|पानी|बाढ़", re.IGNORECASE),
+    "RELIEF": re.compile(r"\b(relief|scheme|claim|compensation|damage|loss|money)\b|नुकसान|सहायता|मुआवजा", re.IGNORECASE),
     "COORD": re.compile(r"\b(coord|triage|brief|summary|coordinator|dashboard|ward)\b", re.IGNORECASE),
 }
 
@@ -26,6 +33,8 @@ PROFILE_FIELDS = ["floor", "dependents", "transport"]
 
 
 def detect_intent(text: str) -> str | None:
+    """Match message text against keyword patterns. First matching intent wins;
+    dict insertion order defines precedence (PREPARE before REPORT, etc.)."""
     for intent, pattern in KEYWORD_PATTERNS.items():
         if pattern.search(text):
             return intent
@@ -33,6 +42,7 @@ def detect_intent(text: str) -> str | None:
 
 
 def _missing_profile_fields(session: dict) -> list[str]:
+    """Return profile fields still unanswered, in the order they should be asked."""
     return [f for f in PROFILE_FIELDS if not session.get(f)]
 
 
@@ -147,10 +157,10 @@ async def route(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
 
 
 async def _run_prepare(session: dict, phone_hash: str) -> tuple[str, dict]:
+    """Build the household profile from session state and generate a plan."""
     pincode = session.get("pincode", "000000")
     lang = session.get("language", "en")
 
-    # Run vulnerability lookup and any prep concurrently
     risk = get_risk_tier(pincode)
 
     profile = HouseholdProfile(
@@ -166,6 +176,8 @@ async def _run_prepare(session: dict, phone_hash: str) -> tuple[str, dict]:
 
 
 def _parse_language(text: str) -> str:
+    """Map a language reply (name, native script, or menu number) to a canonical
+    language name. Unknown input defaults to English rather than re-asking."""
     text_lower = text.lower().strip()
     lang_map = {
         "english": "English", "1": "English",
@@ -179,11 +191,13 @@ def _parse_language(text: str) -> str:
 
 
 def _parse_pincode(text: str) -> str | None:
+    """Extract a standalone 6-digit Indian pincode from free text, or None."""
     match = re.search(r"\b(\d{6})\b", text)
     return match.group(1) if match else None
 
 
 def _risk_greeting(tier: str, lang: str) -> str:
+    """Post-onboarding greeting that states the user's flood risk tier upfront."""
     greetings = {
         "HIGH": "Your area has HIGH flood risk. I'll help you prepare, get alerts, and file relief claims. Send PREPARE to start.",
         "MEDIUM": "Your area has MEDIUM flood risk. Send PREPARE for a plan, ALERT for weather updates, or RELIEF for scheme info.",

@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import re
+from typing import Any, AsyncGenerator
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -44,15 +45,17 @@ class ReliefRequest(BaseModel):
         return v[:1000]
 
 
-async def _sse_stream(generator):
+async def _sse_stream(generator: AsyncGenerator[dict[str, Any], None]) -> AsyncGenerator[str, None]:
+    """Wrap a dict generator into SSE wire format, terminated by [DONE]."""
     async for chunk in generator:
         yield f"data: {json.dumps(chunk)}\n\n"
     yield "data: [DONE]\n\n"
 
 
-async def _triage_generator(pincode: str, hours: int):
+async def _triage_generator(pincode: str, hours: int) -> AsyncGenerator[dict[str, Any], None]:
+    """Stream triage progress stages, then the final coordinator brief."""
     yield {"stage": "Fetching reports...", "done": False}
-    await asyncio.sleep(0)  # yield control to event loop
+    await asyncio.sleep(0)  # yield control so the first stage flushes before the Gemini call
 
     yield {"stage": "Analyzing...", "done": False}
     result = await synthesize_triage(pincode, hours)
@@ -61,7 +64,8 @@ async def _triage_generator(pincode: str, hours: int):
     yield {"stage": "Complete", "done": True, "result": result}
 
 
-async def _relief_generator(description: str, language: str):
+async def _relief_generator(description: str, language: str) -> AsyncGenerator[dict[str, Any], None]:
+    """Stream relief-matching progress stages, then the matched schemes."""
     yield {"stage": "Reading your description...", "done": False}
     await asyncio.sleep(0)
 

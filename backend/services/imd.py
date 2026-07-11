@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from pathlib import Path
 from typing import TypedDict, Final
 
@@ -80,8 +81,6 @@ def _extract_relevant_text(html: str, pincode: str) -> str:
     for line in lines:
         stripped = line.strip()
         if state.lower() in stripped.lower() and len(stripped) > 20:
-            # Strip basic HTML tags
-            import re
             clean = re.sub(r"<[^>]+>", "", stripped).strip()
             if clean:
                 relevant.append(clean)

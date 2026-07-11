@@ -17,14 +17,16 @@ _GENERATION_CONFIG = types.GenerateContentConfig(
 )
 
 
-async def call_gemini(system: str, user: str, schema: dict[str, Any] | None = None) -> dict[str, Any]:
+async def call_gemini(system: str, user: str) -> dict[str, Any]:
     """Call Gemini with structured JSON output. Retries up to 3x on parse failure."""
     full_prompt = f"{system}\n\nUser input: {user}"
     last_error: Exception | None = None
 
     for attempt in range(3):
         try:
-            response = _client.models.generate_content(
+            # client.aio is the SDK's native async surface — a sync call here
+            # would block the event loop and stall concurrent SSE streams
+            response = await _client.aio.models.generate_content(
                 model="gemini-3.5-flash",
                 contents=full_prompt,
                 config=_GENERATION_CONFIG,
