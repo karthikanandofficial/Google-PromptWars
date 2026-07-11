@@ -21,6 +21,7 @@ app.add_middleware(
         "https://monsoon-saathi.vercel.app",
         "https://*.vercel.app",
         "https://frontend-9f1qvbzne-karthikanandofficial-6992s-projects.vercel.app",
+        "https://monsoon-saathi-api.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
