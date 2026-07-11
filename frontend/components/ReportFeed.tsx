@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { subscribeToReports, Report } from "@/lib/firestore";
+import { Report } from "@/lib/firestore";
 
 function formatTime(ts: string) {
   try {
@@ -27,18 +26,15 @@ function ReportSkeleton() {
   );
 }
 
-export function ReportFeed() {
-  const [reports, setReports] = useState<Report[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+interface ReportFeedProps {
+  /** null while the Firestore snapshot is still loading */
+  reports: Report[] | null;
+  error: string | null;
+}
 
-  useEffect(() => {
-    const unsub = subscribeToReports(
-      (r) => setReports(r),
-      (e) => setError(e.message)
-    );
-    return unsub;
-  }, []);
-
+/** Presentational feed of citizen reports. The parent owns the Firestore
+ * subscription so the map and feed share one listener. */
+export function ReportFeed({ reports, error }: ReportFeedProps) {
   if (error) {
     return (
       <div style={{ color: "var(--ms-warn)", padding: 12, fontSize: 13 }}>

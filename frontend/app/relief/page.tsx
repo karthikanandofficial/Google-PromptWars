@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { streamRelief, TriageResult } from "@/lib/api";
 import { StreamingResponse } from "@/components/StreamingResponse";
+import { fieldLabel, textInput, errorBox, submitButton } from "@/lib/styles";
 
 const LANGUAGES = [
   { value: "English", label: "English" },
@@ -52,7 +53,7 @@ export default function ReliefPage() {
         Relief Scheme Lookup
       </h1>
       <p style={{ fontSize: 13, color: "var(--ms-text-secondary)", marginBottom: 24 }}>
-        Describe your loss in any language. We'll match applicable government relief schemes and generate a draft application.
+        Describe your loss in any language. We&apos;ll match applicable government relief schemes and generate a draft application.
       </p>
 
       <form
@@ -62,7 +63,7 @@ export default function ReliefPage() {
         <div>
           <label
             htmlFor="loss-description"
-            style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--ms-text-secondary)", marginBottom: 6 }}
+            style={fieldLabel}
           >
             DESCRIBE YOUR LOSS OR DAMAGE
           </label>
@@ -73,18 +74,7 @@ export default function ReliefPage() {
             placeholder="Describe your loss in any language... (e.g. My house was flooded, ground floor fully damaged. Lost cattle and crops.)"
             aria-label="Describe your loss in any language"
             rows={5}
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 8,
-              background: "var(--ms-surface)",
-              border: "1px solid var(--ms-border)",
-              color: "var(--ms-text-primary)",
-              fontSize: 14,
-              resize: "vertical",
-              outline: "none",
-              lineHeight: 1.6,
-            }}
+            style={{ ...textInput, padding: "12px 14px", resize: "vertical", lineHeight: 1.6 }}
           />
           <div style={{ fontSize: 11, color: "var(--ms-text-secondary)", marginTop: 4, textAlign: "right" }}>
             {description.length}/1000
@@ -95,7 +85,7 @@ export default function ReliefPage() {
           <div style={{ flex: "1 1 200px" }}>
             <label
               htmlFor="language-select"
-              style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--ms-text-secondary)", marginBottom: 6 }}
+              style={fieldLabel}
             >
               RESPONSE LANGUAGE
             </label>
@@ -104,16 +94,7 @@ export default function ReliefPage() {
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               aria-label="Select response language"
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                borderRadius: 8,
-                background: "var(--ms-surface)",
-                border: "1px solid var(--ms-border)",
-                color: "var(--ms-text-primary)",
-                fontSize: 14,
-                outline: "none",
-              }}
+              style={textInput}
             >
               {LANGUAGES.map((l) => (
                 <option key={l.value} value={l.value}>
@@ -127,18 +108,7 @@ export default function ReliefPage() {
             type="submit"
             disabled={loading}
             aria-label="Find matching relief schemes"
-            style={{
-              padding: "10px 24px",
-              borderRadius: 8,
-              background: loading ? "var(--ms-border)" : "var(--ms-success)",
-              color: "white",
-              fontWeight: 700,
-              fontSize: 14,
-              border: "none",
-              cursor: loading ? "not-allowed" : "pointer",
-              transition: "background 0.15s",
-              whiteSpace: "nowrap",
-            }}
+            style={submitButton(loading, "var(--ms-success)")}
           >
             {loading ? stage ?? "Processing..." : "Find Schemes"}
           </button>
@@ -147,14 +117,7 @@ export default function ReliefPage() {
         {error && (
           <div
             role="alert"
-            style={{
-              padding: "10px 14px",
-              borderRadius: 8,
-              background: "rgba(239,68,68,0.1)",
-              border: "1px solid rgba(239,68,68,0.4)",
-              color: "#ef4444",
-              fontSize: 13,
-            }}
+            style={errorBox}
           >
             {error}
           </div>

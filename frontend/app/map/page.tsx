@@ -28,22 +28,20 @@ function zoneBorder(count: number): string {
 }
 
 export default function MapPage() {
-  const [reports, setReports] = useState<Report[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Single Firestore listener shared by the zone map and the feed panel
+  const [reports, setReports] = useState<Report[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const unsub = subscribeToReports(
-      (r) => {
-        setReports(r);
-        setLoading(false);
-      },
-      () => setLoading(false)
+      (r) => setReports(r),
+      (e) => setError(e.message)
     );
     return unsub;
   }, []);
 
   const countForZone = (zone: (typeof ZONES)[0]) =>
-    reports.filter((r) =>
+    (reports ?? []).filter((r) =>
       zone.pincodes.some((p) => r.pincode.startsWith(p))
     ).length;
 
@@ -157,7 +155,7 @@ export default function MapPage() {
           <h2 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "var(--ms-text-secondary)", letterSpacing: "0.05em" }}>
             LATEST REPORTS
           </h2>
-          <ReportFeed />
+          <ReportFeed reports={reports} error={error} />
         </div>
       </div>
     </div>

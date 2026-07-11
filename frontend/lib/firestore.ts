@@ -7,9 +7,10 @@ import {
   orderBy,
   limit,
   onSnapshot,
-  Timestamp,
+  QueryConstraint,
   QuerySnapshot,
   DocumentData,
+  Unsubscribe,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -33,22 +34,19 @@ export interface Report {
   source: string;
 }
 
-export function subscribeToReports(
+/** Open a real-time listener on the reports collection with the given constraints. */
+function subscribe(
+  constraints: QueryConstraint[],
   onData: (reports: Report[]) => void,
   onError?: (e: Error) => void
-) {
+): Unsubscribe {
   const db = getFirestore(getApp());
-  const q = query(
-    collection(db, "reports"),
-    orderBy("timestamp", "desc"),
-    limit(20)
-  );
+  const q = query(collection(db, "reports"), ...constraints);
 
   return onSnapshot(
     q,
     (snap: QuerySnapshot<DocumentData>) => {
-      const reports = snap.docs.map((d) => d.data() as Report);
-      onData(reports);
+      onData(snap.docs.map((d) => d.data() as Report));
     },
     (err) => {
       onError?.(err);
@@ -56,27 +54,23 @@ export function subscribeToReports(
   );
 }
 
+/** Subscribe to the 20 most recent reports across all pincodes (map page feed). */
+export function subscribeToReports(
+  onData: (reports: Report[]) => void,
+  onError?: (e: Error) => void
+): Unsubscribe {
+  return subscribe([orderBy("timestamp", "desc"), limit(20)], onData, onError);
+}
+
+/** Subscribe to the 10 most recent reports for a single pincode. */
 export function subscribeToReportsByPincode(
   pincode: string,
   onData: (reports: Report[]) => void,
   onError?: (e: Error) => void
-) {
-  const db = getFirestore(getApp());
-  const q = query(
-    collection(db, "reports"),
-    where("pincode", "==", pincode),
-    orderBy("timestamp", "desc"),
-    limit(10)
-  );
-
-  return onSnapshot(
-    q,
-    (snap: QuerySnapshot<DocumentData>) => {
-      const reports = snap.docs.map((d) => d.data() as Report);
-      onData(reports);
-    },
-    (err) => {
-      onError?.(err);
-    }
+): Unsubscribe {
+  return subscribe(
+    [where("pincode", "==", pincode), orderBy("timestamp", "desc"), limit(10)],
+    onData,
+    onError
   );
 }

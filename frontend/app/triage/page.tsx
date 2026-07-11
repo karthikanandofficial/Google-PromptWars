@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { streamTriage, SSEChunk, TriageResult } from "@/lib/api";
+import { streamTriage, TriageResult } from "@/lib/api";
+import { fieldLabel, textInput, errorBox, submitButton } from "@/lib/styles";
 import { WorkflowProgress } from "@/components/WorkflowProgress";
 import { TriageBoard } from "@/components/TriageBoard";
 
@@ -55,7 +56,7 @@ export default function TriagePage() {
           <div style={{ flex: "1 1 160px" }}>
             <label
               htmlFor="pincode-input"
-              style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--ms-text-secondary)", marginBottom: 6 }}
+              style={fieldLabel}
             >
               PINCODE
             </label>
@@ -67,22 +68,13 @@ export default function TriagePage() {
               placeholder="e.g. 682001"
               aria-label="Enter pincode"
               maxLength={6}
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                borderRadius: 8,
-                background: "var(--ms-surface)",
-                border: "1px solid var(--ms-border)",
-                color: "var(--ms-text-primary)",
-                fontSize: 14,
-                outline: "none",
-              }}
+              style={textInput}
             />
           </div>
           <div style={{ flex: "1 1 120px" }}>
             <label
               htmlFor="hours-select"
-              style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--ms-text-secondary)", marginBottom: 6 }}
+              style={fieldLabel}
             >
               TIME WINDOW
             </label>
@@ -91,16 +83,7 @@ export default function TriagePage() {
               value={hours}
               onChange={(e) => setHours(Number(e.target.value))}
               aria-label="Select time window"
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                borderRadius: 8,
-                background: "var(--ms-surface)",
-                border: "1px solid var(--ms-border)",
-                color: "var(--ms-text-primary)",
-                fontSize: 14,
-                outline: "none",
-              }}
+              style={textInput}
             >
               <option value={3}>Last 3 hours</option>
               <option value={6}>Last 6 hours</option>
@@ -112,19 +95,7 @@ export default function TriagePage() {
             type="submit"
             disabled={loading}
             aria-label="Generate triage brief"
-            style={{
-              padding: "10px 24px",
-              borderRadius: 8,
-              background: loading ? "var(--ms-border)" : "var(--ms-accent)",
-              color: "white",
-              fontWeight: 700,
-              fontSize: 14,
-              border: "none",
-              cursor: loading ? "not-allowed" : "pointer",
-              transition: "background 0.15s",
-              whiteSpace: "nowrap",
-              alignSelf: "flex-end",
-            }}
+            style={{ ...submitButton(loading), alignSelf: "flex-end" }}
           >
             {loading ? "Generating..." : "Generate Triage Brief"}
           </button>
@@ -133,14 +104,7 @@ export default function TriagePage() {
         {error && (
           <div
             role="alert"
-            style={{
-              padding: "10px 14px",
-              borderRadius: 8,
-              background: "rgba(239,68,68,0.1)",
-              border: "1px solid rgba(239,68,68,0.4)",
-              color: "#ef4444",
-              fontSize: 13,
-            }}
+            style={errorBox}
           >
             {error}
           </div>

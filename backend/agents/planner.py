@@ -46,6 +46,12 @@ def _missing_profile_fields(session: dict) -> list[str]:
     return [f for f in PROFILE_FIELDS if not session.get(f)]
 
 
+HELP_TEXT = (
+    "Send one of: PREPARE (get a plan), ALERT (weather warning), "
+    "REPORT (log a situation), RELIEF (scheme info)."
+)
+
+
 async def route(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
     """
     Route incoming message to the correct agent.
@@ -54,106 +60,110 @@ async def route(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
     state = session.get("state", "ONBOARD")
     body_clean = body.strip()
 
-    # ── ONBOARDING ──────────────────────────────────────────────────────────
-    if state == "ONBOARD":
-        raw = await call_gemini(ONBOARD_TEMPLATE, body_clean)
-        validated = validate_and_repair(raw, "ONBOARD")
-        session["state"] = "AWAIT_LANGUAGE"
-        return validated["response_text"], session
+    state_handlers = {
+        "ONBOARD": _handle_onboard,
+        "AWAIT_LANGUAGE": _handle_await_language,
+        "AWAIT_PINCODE": _handle_await_pincode,
+        "COLLECT_PROFILE": _handle_collect_profile,
+    }
+    handler = state_handlers.get(state)
+    if handler:
+        return await handler(session, body_clean, phone_hash)
 
-    if state == "AWAIT_LANGUAGE":
-        lang = _parse_language(body_clean)
-        session["language"] = lang
-        session["state"] = "AWAIT_PINCODE"
-        raw = await call_gemini(PINCODE_TEMPLATE.format(language=lang), body_clean)
-        validated = validate_and_repair(raw, "AWAIT_PINCODE")
-        return validated["response_text"], session
+    return await _handle_ready(session, body_clean, phone_hash)
 
-    if state == "AWAIT_PINCODE":
-        pincode = _parse_pincode(body_clean)
-        if not pincode:
-            return "Please send your 6-digit pincode (e.g. 682001).", session
-        session["pincode"] = pincode
-        session["state"] = "READY"
-        risk = get_risk_tier(pincode)
-        lang = session.get("language", "en")
-        tip = _risk_greeting(risk["tier"].value, lang)
-        return tip, session
 
-    # ── COLLECT PROFILE ─────────────────────────────────────────────────────
-    if state == "COLLECT_PROFILE":
-        collecting = session.get("collecting_field")
-        if collecting:
-            session[collecting] = body_clean[:50]
-        missing = _missing_profile_fields(session)
-        if missing:
-            lang = session.get("language", "en")
-            raw = await call_gemini(
-                PROFILE_COLLECT_TEMPLATE.format(language=lang, missing_fields=", ".join(missing)),
-                body_clean,
-            )
-            validated = validate_and_repair(raw, "COLLECT_PROFILE")
-            session["collecting_field"] = validated.get("asking_field", missing[0])
-            return validated["response_text"], session
-        # Profile complete → run plan
-        session["state"] = "READY"
-        return await _run_prepare(session, phone_hash)
+# ── State handlers (onboarding flow) ─────────────────────────────────────────
 
-    # ── READY — detect intent ────────────────────────────────────────────────
-    intent = detect_intent(body_clean)
+async def _handle_onboard(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
+    """First contact: greet and ask for language preference."""
+    raw = await call_gemini(ONBOARD_TEMPLATE, body)
+    validated = validate_and_repair(raw, "ONBOARD")
+    session["state"] = "AWAIT_LANGUAGE"
+    return validated["response_text"], session
+
+
+async def _handle_await_language(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
+    """Store the chosen language, then ask for the pincode."""
+    lang = _parse_language(body)
+    session["language"] = lang
+    session["state"] = "AWAIT_PINCODE"
+    raw = await call_gemini(PINCODE_TEMPLATE.format(language=lang), body)
+    validated = validate_and_repair(raw, "AWAIT_PINCODE")
+    return validated["response_text"], session
+
+
+async def _handle_await_pincode(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
+    """Store the pincode, look up flood risk, and greet with the risk tier."""
+    pincode = _parse_pincode(body)
+    if not pincode:
+        return "Please send your 6-digit pincode (e.g. 682001).", session
+    session["pincode"] = pincode
+    session["state"] = "READY"
+    risk = get_risk_tier(pincode)
+    lang = session.get("language", "en")
+    return _risk_greeting(risk["tier"].value, lang), session
+
+
+async def _handle_collect_profile(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
+    """Record the answer to the current profile question; ask the next one or
+    generate the plan once the profile is complete."""
+    collecting = session.get("collecting_field")
+    if collecting:
+        session[collecting] = body[:50]
+    missing = _missing_profile_fields(session)
+    if missing:
+        return await _ask_next_profile_question(session, body, missing)
+    session["state"] = "READY"
+    return await _run_prepare(session, phone_hash)
+
+
+async def _ask_next_profile_question(session: dict, body: str, missing: list[str]) -> tuple[str, dict]:
+    """Generate the next profile question via Gemini and track which field it asks."""
+    lang = session.get("language", "en")
+    raw = await call_gemini(
+        PROFILE_COLLECT_TEMPLATE.format(language=lang, missing_fields=", ".join(missing)),
+        body,
+    )
+    validated = validate_and_repair(raw, "COLLECT_PROFILE")
+    session["collecting_field"] = validated.get("asking_field", missing[0])
+    return validated["response_text"], session
+
+
+# ── READY-state intent dispatch ───────────────────────────────────────────────
+
+async def _handle_ready(session: dict, body: str, phone_hash: str) -> tuple[str, dict]:
+    """Detect intent from a READY-state message and dispatch to the right agent."""
+    intent = detect_intent(body)
 
     if not intent:
-        # Free text: continue last active flow or give help
-        last = session.get("last_intent")
-        if last == "PREPARE":
+        # Free text: continue the last active flow or show the help menu
+        if session.get("last_intent") == "PREPARE":
             return await _run_prepare(session, phone_hash)
-        return (
-            "Send one of: PREPARE (get a plan), ALERT (weather warning), "
-            "REPORT (log a situation), RELIEF (scheme info).",
-            session,
-        )
+        return HELP_TEXT, session
 
     session["last_intent"] = intent
+    pincode = session.get("pincode", "000000")
+    lang = session.get("language", "en")
 
     if intent == "PREPARE":
         missing = _missing_profile_fields(session)
         if missing:
             session["state"] = "COLLECT_PROFILE"
             session["collecting_field"] = None
-            lang = session.get("language", "en")
-            raw = await call_gemini(
-                PROFILE_COLLECT_TEMPLATE.format(language=lang, missing_fields=", ".join(missing)),
-                body_clean,
-            )
-            validated = validate_and_repair(raw, "COLLECT_PROFILE")
-            session["collecting_field"] = validated.get("asking_field", missing[0])
-            return validated["response_text"], session
+            return await _ask_next_profile_question(session, body, missing)
         return await _run_prepare(session, phone_hash)
 
     if intent == "ALERT":
-        pincode = session.get("pincode", "000000")
-        lang = session.get("language", "en")
         result = await get_alert(pincode, lang)
-        return result["response_text"], session
-
-    if intent == "REPORT":
-        pincode = session.get("pincode", "000000")
-        lang = session.get("language", "en")
-        result = await intake_report(body_clean, phone_hash, pincode, lang)
-        return result["response_text"], session
-
-    if intent == "RELIEF":
-        lang = session.get("language", "en")
-        pincode = session.get("pincode", "000000")
-        result = await match_schemes(body_clean, lang, pincode)
-        return result["response_text"], session
-
-    if intent == "COORD":
-        pincode = session.get("pincode", "000000")
+    elif intent == "REPORT":
+        result = await intake_report(body, phone_hash, pincode, lang)
+    elif intent == "RELIEF":
+        result = await match_schemes(body, lang, pincode)
+    else:  # COORD — only remaining intent
         result = await synthesize_triage(pincode)
-        return result["response_text"], session
 
-    return "How can I help you? Send PREPARE, ALERT, REPORT, or RELIEF.", session
+    return result["response_text"], session
 
 
 async def _run_prepare(session: dict, phone_hash: str) -> tuple[str, dict]:

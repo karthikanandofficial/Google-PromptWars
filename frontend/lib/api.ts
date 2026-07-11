@@ -15,6 +15,8 @@ export interface SSEChunk {
   result?: TriageResult;
 }
 
+/** POST /api/triage and yield SSE chunks as they arrive.
+ * Yields progress stages, then a final chunk with `done: true` and the brief. */
 export async function* streamTriage(
   pincode: string,
   hours = 6
@@ -27,6 +29,8 @@ export async function* streamTriage(
   yield* parseSSE(res);
 }
 
+/** POST /api/relief and yield SSE chunks: progress stages, then the matched
+ * schemes with a draft application in the requested language. */
 export async function* streamRelief(
   description: string,
   language: string
@@ -39,6 +43,8 @@ export async function* streamRelief(
   yield* parseSSE(res);
 }
 
+/** Parse a text/event-stream body into typed chunks. Tolerates chunks split
+ * across network reads by buffering incomplete lines; stops at [DONE]. */
 async function* parseSSE(res: Response): AsyncGenerator<SSEChunk> {
   if (!res.ok || !res.body) throw new Error(`API error: ${res.status}`);
   const reader = res.body.getReader();
@@ -65,6 +71,7 @@ async function* parseSSE(res: Response): AsyncGenerator<SSEChunk> {
   }
 }
 
+/** GET recent citizen reports for a pincode (non-streaming). */
 export async function fetchReports(pincode: string, hours = 6) {
   const res = await fetch(`${API_URL}/api/reports/${pincode}?hours=${hours}`);
   if (!res.ok) throw new Error(`Reports fetch failed: ${res.status}`);
